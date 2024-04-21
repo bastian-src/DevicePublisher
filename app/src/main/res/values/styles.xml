@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- https://yeun.github.io/open-color/ -->
+    <style name="headline" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#adb5bd</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">10dp</item>
+    </style>
+    <style name="off" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#000000</item>
+        <item name="android:colorBackground">#ff6b6b</item>
+        <item name="android:background">#ff6b6b</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="on" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#000000</item>
+        <item name="android:colorBackground">#51cf66</item>
+        <item name="android:background">#51cf66</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="cardOn" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">#51cf66</item>
+    </style>
+    <style name="cardOff" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">#ff6b6b</item>
+    </style>
+</resources>

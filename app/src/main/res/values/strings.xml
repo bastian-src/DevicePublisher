@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">DevicePublisher</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="api_service_notification_channel_general_name">API Service Channel</string>
+    <string name="api_service_notification_title">API Service</string>
+    <string name="api_service_notification_description">This background service provides an API port  such that client applications can connect and retrieve information on the phone\'s cellular connection.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>

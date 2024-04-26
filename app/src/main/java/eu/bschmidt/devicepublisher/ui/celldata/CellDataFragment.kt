@@ -18,7 +18,7 @@ import eu.bschmidt.devicepublisher.R
  */
 class CellDataFragment : Fragment() {
 
-    private val viewModel: CellDataViewModel by activityViewModels()
+    private val viewModel: CellDataViewModel = CellDataViewModel.getInstance()
 
     private var columnCount = 1
 

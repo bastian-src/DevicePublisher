@@ -1,15 +1,16 @@
 package eu.bschmidt.devicepublisher.ui.api
 
 import android.content.Context
-import androidx.fragment.app.viewModels
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import eu.bschmidt.devicepublisher.R
 import eu.bschmidt.devicepublisher.model.api.APIStatusViewModel
 
@@ -17,9 +18,10 @@ class APIStatusFragment : Fragment() {
 
     companion object {
         fun newInstance() = APIStatusFragment()
+        private const val TAG = "APIStatusFragment"
     }
 
-    private val viewModel: APIStatusViewModel by viewModels()
+    private val viewModel: APIStatusViewModel = APIStatusViewModel.getInstance()
     private lateinit var context: Context
     private lateinit var runningCard: CardView
     private lateinit var runningTextView: TextView
@@ -50,20 +52,21 @@ class APIStatusFragment : Fragment() {
         if (runStatus) {
             runningCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.on_green))
             runningTextView.setTextAppearance(R.style.on)
-            runningTextView.text = "Running"
+            runningTextView.text = "🐢💨"
         } else {
             runningCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.off_red))
             runningTextView.setTextAppearance(R.style.off)
-            runningTextView.text = "Not Running"
+            runningTextView.text = "🐢"
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.apiStatus.observe(viewLifecycleOwner) { status ->
+            Log.d(TAG, "changed APIStatusViewmodel: $status")
             setRunningTextView(status.running)
             addressTextView.text = status.address
-            requestsTextView.text = "#Requests: ${status.requests}"
+            requestsTextView.text = "${status.requests} 📬 "
         }
     }
 }

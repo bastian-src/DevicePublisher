@@ -1,4 +1,4 @@
-package eu.bschmidt.devicepublisher.bak
+package eu.bschmidt.devicepublisher.service
 
 import android.app.Service
 import android.content.Intent
@@ -10,9 +10,22 @@ import android.os.Binder
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ServiceLifecycleDispatcher
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
+import eu.bschmidt.devicepublisher.model.ModelUpdater
+import eu.bschmidt.devicepublisher.model.api.APIStatusViewModel
+import eu.bschmidt.devicepublisher.api.APIHandler
 
-class APIService : Service() {
+class APIService : Service(), LifecycleOwner {
     private val binder = LocalBinder()
+    private val mDispatcher = ServiceLifecycleDispatcher(this)
+    private var updaterThread: ModelUpdater? = null
+    private var apiThread: APIHandler? = null
+
+    override val lifecycle: Lifecycle = mDispatcher.lifecycle
 
     inner class LocalBinder : Binder() {
         fun getService(): APIService = this@APIService
@@ -47,11 +60,6 @@ class APIService : Service() {
         Toast.makeText(this, "Foreground Service destroyed", Toast.LENGTH_SHORT).show()
     }
 
-    /**
-     * Promotes the service to a foreground service, showing a notification to the user.
-     *
-     * This needs to be called within 10 seconds of starting the service or the system will throw an exception.
-     */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun startAsForegroundService() {
         // create the notification channel
@@ -59,18 +67,28 @@ class APIService : Service() {
 
         // promote service to foreground service
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(NOTIFICATION_ID, NotificationsHelper.buildNotification(this), ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE)
+            startForeground(
+                NOTIFICATION_ID,
+                NotificationsHelper.buildNotification(this), ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE)
 
         } else {
             startForeground(NOTIFICATION_ID, NotificationsHelper.buildNotification(this),)
         }
+
+        // start updater thread
+        updaterThread = ModelUpdater()
+        updaterThread?.start()
+        apiThread = APIHandler()
+        apiThread?.start()
+
+        Log.d(TAG, "startAsForegroundService()")
     }
 
-    /**
-     * Stops the foreground service and removes the notification.
-     * Can be called from inside or outside the service.
-     */
     fun stopForegroundService() {
+        apiThread?.onStop()
+        apiThread?.join()
+        updaterThread?.onStop()
+        updaterThread?.join()
         stopSelf()
     }
 
@@ -78,4 +96,5 @@ class APIService : Service() {
         private const val TAG = "APIService"
         private const val NOTIFICATION_ID = 123
     }
+
 }

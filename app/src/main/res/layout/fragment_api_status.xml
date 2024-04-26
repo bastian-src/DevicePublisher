@@ -39,7 +39,7 @@
             android:layout_margin="5dp"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toStartOf="@+id/constraintSecond"
-            card_view:layout_constraintHorizontal_weight="1"
+            card_view:layout_constraintHorizontal_weight=".15"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints">
@@ -59,7 +59,7 @@
             android:layout_margin="5dp"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toStartOf="@+id/constraintThird"
-            card_view:layout_constraintHorizontal_weight="1"
+            card_view:layout_constraintHorizontal_weight=".5"
             card_view:layout_constraintStart_toEndOf="@+id/constraintFirst"
             card_view:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints">
@@ -79,7 +79,7 @@
             android:layout_margin="5dp"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintHorizontal_weight="1"
+            card_view:layout_constraintHorizontal_weight=".35"
             card_view:layout_constraintStart_toEndOf="@+id/constraintSecond"
             card_view:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints">
@@ -88,7 +88,7 @@
                 android:id="@+id/requests"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="right"
                 android:text="5 requests" />
         </androidx.cardview.widget.CardView>
 

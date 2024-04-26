@@ -1,22 +1,67 @@
 package eu.bschmidt.devicepublisher
 
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat
+import eu.bschmidt.devicepublisher.service.APIService
 import eu.bschmidt.devicepublisher.databinding.ActivityMainBinding
-import eu.bschmidt.devicepublisher.model.celldata.CellData
 import eu.bschmidt.devicepublisher.model.celldata.CellDataViewModel
-import eu.bschmidt.devicepublisher.model.celldata.CellType
-import eu.bschmidt.devicepublisher.ui.celldata.CellDataFragment
-import kotlin.random.Random
+import eu.bschmidt.devicepublisher.model.api.APIStatusViewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private var isServiceRunning = false
-    private val viewModel: CellDataViewModel by viewModels()
+
+    private val cellDataViewModel: CellDataViewModel = CellDataViewModel.getInstance()
+    private val apiStatusViewModel: APIStatusViewModel = APIStatusViewModel.getInstance()
+
+    // TODO: Change the service running state to an enum to include "Loading"
+    private var isServiceRunning: Boolean = false
+    private val notificationPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {
+            // if permission was denied, the service can still run only the notification won't be visible
+        }
+    private var apiService: APIService? = null
+    private var serviceBoundState by mutableStateOf(false)
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            Log.d(TAG, "onServiceConnected")
+
+            val binder = service as APIService.LocalBinder
+            apiService = binder.getService()
+            serviceBoundState = true
+            isServiceRunning = true
+
+            onServiceConnected()
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            // This is called when the connection with the service has been disconnected. Clean up.
+            Log.d(TAG, "onServiceDisconnected")
+
+            isServiceRunning = false
+            serviceBoundState = false
+            apiService = null
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,45 +69,58 @@ class MainActivity : AppCompatActivity() {
         binding.fab.setOnClickListener { toggleService() }
         setContentView(binding.root)
 
-        startViewModelUpdateThread()
+        checkAndRequestNotificationPermission()
+        tryToBindToServiceIfRunning()
+        initUI()
     }
 
-    private fun startViewModelUpdateThread() {
-        val handler = Handler(Looper.getMainLooper())
-        handler.postDelayed(object : Runnable {
-            override fun run() {
-                // Update ViewModel with random content
+    private fun initUI() {
+        apiStatusViewModel.apiStatus.observe(this) { status ->
+            isServiceRunning = status.running
+            updateFabIcon()
+        }
+    }
 
-                viewModel.cellDataList.value?.forEach { cellData ->
-                    viewModel.removeCellData(cellData.id)
+    private fun checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)) {
+                android.content.pm.PackageManager.PERMISSION_GRANTED -> {
+                    // permission already granted
                 }
 
-                // Add each generated CellData object individually
-                repeat(Random.nextInt(1, 10)) {
-                    val randomCellData = generateRandomCellData()
-                    viewModel.addCellData(randomCellData)
+                else -> {
+                    notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                 }
-
-                // Repeat every 5 seconds
-                handler.postDelayed(this, 2500)
             }
-        }, 2500)
+        }
     }
 
-    private fun generateRandomCellData(): CellData {
-        val cellId = Random.nextInt(1, 100)
-        val cellType = CellType.values().random()
-        val arfcn = Random.nextInt(1000, 2000)
-        val band = Random.nextInt(1, 10)
-        val rssi = Random.nextFloat() * 100
-        val rsrq = Random.nextFloat() * 100
-        val rsrp = Random.nextFloat() * 100
-        return CellData(cellId, cellType, arfcn, band, rssi, rsrq, rsrp)
+    private fun tryToBindToServiceIfRunning() {
+        Intent(this, APIService::class.java).also { intent ->
+            bindService(intent, connection, 0)
+        }
+    }
+
+    private fun startAPIService() {
+        val serviceIntent = Intent(this, APIService::class.java)
+        ContextCompat.startForegroundService(this, serviceIntent)
+        tryToBindToServiceIfRunning()
+    }
+
+    private fun stopAPIService() {
+        apiService?.stopForegroundService()
+    }
+
+    private fun onServiceConnected() {
+        Toast.makeText(this, "onServiceConnected", Toast.LENGTH_SHORT).show()
     }
 
     private fun toggleService() {
-        isServiceRunning = !isServiceRunning
-        updateFabIcon()
+        if (!serviceBoundState) {
+            startAPIService()
+        } else {
+            stopAPIService()
+        }
     }
 
     private fun updateFabIcon() {

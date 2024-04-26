@@ -12,6 +12,7 @@ data class APIStatus (
 )
 
 class APIStatusViewModel : ViewModel() {
+
     private val _apiStatus = MutableLiveData<APIStatus>()
     val apiStatus: LiveData<APIStatus> get() = _apiStatus
 
@@ -35,5 +36,17 @@ class APIStatusViewModel : ViewModel() {
         val currentStatus = _apiStatus.value ?: APIStatus()
         currentStatus.running = value
         _apiStatus.value = currentStatus
+    }
+
+    companion object {
+        private const val TAG = "APIStatusViewModel"
+        @Volatile
+        private var instance: APIStatusViewModel? = null
+
+        fun getInstance(): APIStatusViewModel {
+            return instance ?: synchronized(this) {
+                instance ?: APIStatusViewModel().also { instance = it }
+            }
+        }
     }
 }

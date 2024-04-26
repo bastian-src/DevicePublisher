@@ -1,4 +1,4 @@
-package eu.bschmidt.devicepublisher.bak
+package eu.bschmidt.devicepublisher.service
 
 import android.app.Notification
 import android.app.NotificationChannel

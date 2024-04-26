@@ -2,14 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BODY_SENSORS" />
+
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -22,8 +25,10 @@
         android:theme="@style/Theme.DevicePublisher"
         tools:targetApi="31">
 
+        <uses-library android:name="org.apache.http.legacy" android:required="false" />
+
         <service
-            android:name=".bak.APIService"
+            android:name=".service.APIService"
             android:enabled="true"
             android:foregroundServiceType="connectedDevice"
             android:exported="false" >
@@ -40,7 +45,7 @@
         </activity>
 
         <service
-            android:name=".bak.DevicePublisherService"
+            android:name=".service.DevicePublisherService"
             android:directBootAware="true"
             android:enabled="true"
             android:exported="false"

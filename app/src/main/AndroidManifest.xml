@@ -2,11 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BODY_SENSORS" />
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -15,6 +19,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
     <application
+        android:name=".MainApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -27,10 +32,11 @@
 
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
 
+        <!-- Type must be location, to retrieve celldata even in background -->
         <service
             android:name=".service.APIService"
             android:enabled="true"
-            android:foregroundServiceType="connectedDevice"
+            android:foregroundServiceType="location"
             android:exported="false" >
         </service>
 
@@ -43,13 +49,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name=".service.DevicePublisherService"
-            android:directBootAware="true"
-            android:enabled="true"
-            android:exported="false"
-            tools:replace="android:enabled" />
     </application>
 
 </manifest>

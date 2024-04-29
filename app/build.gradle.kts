@@ -83,4 +83,7 @@ dependencies {
     implementation(libs.ktor.server.request.validation)
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+
+    // netmonster
+    implementation(libs.netmonster.core)
 }

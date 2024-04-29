@@ -18,13 +18,13 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Cell ID -->
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
+                <!-- Cell ID -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -40,15 +40,34 @@
                     android:layout_marginStart="8dp"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
+
+                <!-- RSSI -->
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:text="RSSI:"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/text_rssi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
             </TableRow>
 
-            <!-- Cell Type -->
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
+                <!-- Cell Type -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -64,15 +83,33 @@
                     android:layout_marginStart="8dp"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
+
+                <!-- RSRP -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:text="RSRP:"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/text_rsrp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
             </TableRow>
 
-            <!-- ARFCN -->
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
+                <!-- ARFCN -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -88,15 +125,33 @@
                     android:layout_marginStart="8dp"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
+
+                <!-- RSRQ -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:text="RSRQ:"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/text_rsrq"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
             </TableRow>
 
-            <!-- Band -->
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
+                <!-- Band -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

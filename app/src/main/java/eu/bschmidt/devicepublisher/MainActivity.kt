@@ -1,8 +1,10 @@
 package eu.bschmidt.devicepublisher
 
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -31,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     // TODO: Change the service running state to an enum to include "Loading"
     private var isServiceRunning: Boolean = false
-    private val notificationPermissionLauncher =
+    private val permissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) {
@@ -65,11 +67,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MainActivity.appContext = applicationContext
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding.fab.setOnClickListener { toggleService() }
         setContentView(binding.root)
 
-        checkAndRequestNotificationPermission()
+        // checkAndRequestNotificationPermission()
+        checkAndRequestPermissions()
         tryToBindToServiceIfRunning()
         initUI()
     }
@@ -89,11 +93,39 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 else -> {
-                    notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                 }
+            }
+
+        }
+    }
+
+    private fun checkAndRequestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permissionsToCheck = arrayOf(
+                android.Manifest.permission.POST_NOTIFICATIONS,
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                android.Manifest.permission.READ_PHONE_STATE
+            )
+
+            val permissionsToRequest = mutableListOf<String>()
+
+            for (permission in permissionsToCheck) {
+                if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                    permissionsToRequest.add(permission)
+                }
+            }
+
+            if (permissionsToRequest.isNotEmpty()) {
+                requestPermissions(permissionsToRequest.toTypedArray(), 200)
+                // permissionLauncher.launch(permissionsToRequest.toTypedArray().toString())
+            } else {
+                // All permissions already granted
             }
         }
     }
+
 
     private fun tryToBindToServiceIfRunning() {
         Intent(this, APIService::class.java).also { intent ->
@@ -134,5 +166,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "MainActivity"
+        lateinit  var appContext: Context
     }
 }

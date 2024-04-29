@@ -1,4 +1,4 @@
-package eu.bschmidt.devicepublisher.service
+package eu.bschmidt.devicepublisher.bak
 
 import android.app.Service
 import android.content.Context

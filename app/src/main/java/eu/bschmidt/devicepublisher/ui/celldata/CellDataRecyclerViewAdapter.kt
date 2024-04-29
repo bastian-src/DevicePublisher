@@ -29,6 +29,9 @@ class CellDataRecyclerViewAdapter(
         holder.cellTypeTextView.text = item.type.toString()
         holder.arfcnTextView.text = item.arfcn.toString()
         holder.bandTextView.text = item.band.toString()
+        holder.rssiTextView.text = item.rssi.toString()
+        holder.rsrpTextView.text = item.rsrq.toString()
+        holder.rsrqTextView.text = item.rsrp.toString()
     }
 
     override fun getItemCount(): Int = values.size
@@ -39,6 +42,9 @@ class CellDataRecyclerViewAdapter(
         var cellTypeTextView = binding.textCellType
         var arfcnTextView = binding.textArfcn
         var bandTextView = binding.textBand
+        var rssiTextView = binding.textRssi
+        var rsrpTextView = binding.textRsrp
+        var rsrqTextView = binding.textRsrq
     }
 
 }

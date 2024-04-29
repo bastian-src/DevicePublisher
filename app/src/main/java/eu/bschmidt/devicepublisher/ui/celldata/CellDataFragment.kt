@@ -35,24 +35,41 @@ class CellDataFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val layout = inflater.inflate(R.layout.fragment_cell_data_list_list, container, false)
-        val view = layout.findViewById<RecyclerView>(R.id.list)
-        val cellDataList: MutableList<CellData> = mutableListOf()
-        val listAdapter = CellDataRecyclerViewAdapter(cellDataList)
+        val viewConnected = layout.findViewById<RecyclerView>(R.id.listConnected)
+        val viewAvailable = layout.findViewById<RecyclerView>(R.id.listAvailable)
+        val connectedCellDataList: MutableList<CellData> = mutableListOf()
+        val availableCellDataList: MutableList<CellData> = mutableListOf()
+        val connectedListAdapter = CellDataRecyclerViewAdapter(connectedCellDataList)
+        val availableListAdapter = CellDataRecyclerViewAdapter(availableCellDataList)
 
-        viewModel.cellDataList.observe(viewLifecycleOwner) { modelList ->
-            cellDataList.clear()
-            cellDataList.addAll(modelList)
-            listAdapter.notifyDataSetChanged()
+        viewModel.connectedCellDataList.observe(viewLifecycleOwner) { modelList ->
+            connectedCellDataList.clear()
+            connectedCellDataList.addAll(modelList)
+            connectedListAdapter.notifyDataSetChanged()
+        }
+        viewModel.availableCellDataList.observe(viewLifecycleOwner) { modelList ->
+            availableCellDataList.clear()
+            availableCellDataList.addAll(modelList)
+            availableListAdapter.notifyDataSetChanged()
         }
 
         // Set the adapter
-        if (view is RecyclerView) {
-            with(view) {
+        if (viewConnected is RecyclerView) {
+            with(viewConnected) {
                 layoutManager = when {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = listAdapter
+                adapter = connectedListAdapter
+            }
+        }
+        if (viewAvailable is RecyclerView) {
+            with(viewAvailable) {
+                layoutManager = when {
+                    columnCount <= 1 -> LinearLayoutManager(context)
+                    else -> GridLayoutManager(context, columnCount)
+                }
+                adapter = availableListAdapter 
             }
         }
         return layout

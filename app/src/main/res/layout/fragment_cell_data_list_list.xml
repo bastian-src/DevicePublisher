@@ -22,8 +22,44 @@
 
     </FrameLayout>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textViewConnectedCells"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            style="@style/headline"
+            android:text="Connected" />
+
+    </FrameLayout>
+
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
+        android:id="@+id/listConnected"
+        android:name="eu.bschmidt.devicepublisher.ui.CellDataListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".ui.celldata.CellDataFragment"
+        tools:listitem="@layout/fragment_cell_data_list" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textViewAvailableCells"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            style="@style/headline"
+            android:text="Available" />
+
+    </FrameLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/listAvailable"
         android:name="eu.bschmidt.devicepublisher.ui.CellDataListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

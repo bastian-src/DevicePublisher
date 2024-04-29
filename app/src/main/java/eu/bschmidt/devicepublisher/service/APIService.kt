@@ -1,6 +1,7 @@
 package eu.bschmidt.devicepublisher.service
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
@@ -49,7 +50,7 @@ class APIService : Service(), LifecycleOwner {
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "onCreate")
-
+        APIService.serviceContext = this
         Toast.makeText(this, "Foreground Service created", Toast.LENGTH_SHORT).show()
     }
 
@@ -69,7 +70,7 @@ class APIService : Service(), LifecycleOwner {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(
                 NOTIFICATION_ID,
-                NotificationsHelper.buildNotification(this), ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE)
+                NotificationsHelper.buildNotification(this), ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
 
         } else {
             startForeground(NOTIFICATION_ID, NotificationsHelper.buildNotification(this),)
@@ -95,6 +96,7 @@ class APIService : Service(), LifecycleOwner {
     companion object {
         private const val TAG = "APIService"
         private const val NOTIFICATION_ID = 123
+        lateinit var serviceContext: Context
     }
 
 }

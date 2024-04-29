@@ -17,9 +17,7 @@ class ModelUpdater: Thread(), StoppableThread {
         while (running) {
             Thread.sleep(UPDATE_INTERVAL_MS)
             
-            DevPubUtils.dispatchToMainThread {
-                viewModels.forEach { it.update() }
-            }
+            viewModels.forEach { it.update() }
         }
     }
 

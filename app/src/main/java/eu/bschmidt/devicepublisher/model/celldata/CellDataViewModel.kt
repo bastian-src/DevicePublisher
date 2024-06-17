@@ -5,37 +5,24 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
-import android.net.NetworkCapabilities
 import android.os.Build
-import android.provider.SimPhonebookContract.ElementaryFiles.SUBSCRIPTION_ID
-import android.telephony.SubscriptionInfo
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import cz.mroczis.netmonster.core.db.model.NetworkType
 import cz.mroczis.netmonster.core.factory.NetMonsterFactory
-import cz.mroczis.netmonster.core.feature.detect.DetectorHspaDc
-import cz.mroczis.netmonster.core.feature.detect.DetectorLteAdvancedNrDisplayInfo
-import cz.mroczis.netmonster.core.feature.detect.DetectorLteAdvancedNrServiceState
-import cz.mroczis.netmonster.core.feature.detect.DetectorLteAdvancedPhysicalChannel
 import cz.mroczis.netmonster.core.model.cell.CellLte
 import cz.mroczis.netmonster.core.model.cell.CellNr
 import cz.mroczis.netmonster.core.model.cell.ICell
 import cz.mroczis.netmonster.core.model.connection.NoneConnection
-import cz.mroczis.netmonster.core.model.nr.NrNsaState
-import eu.bschmidt.devicepublisher.MainActivity
 import eu.bschmidt.devicepublisher.MainApplication
 import eu.bschmidt.devicepublisher.model.DataViewModelInterface
-import eu.bschmidt.devicepublisher.service.APIService
 import eu.bschmidt.devicepublisher.util.DevPubUtils
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import java.util.Collections
-import kotlin.random.Random
 
 @Serializable
 enum class CellType(val type: String) {
@@ -46,7 +33,9 @@ enum class CellType(val type: String) {
 
 @Serializable
 data class CellData (
-    val id: Int? = 0,
+    val nodeB: Int? = 0,
+    val cid: Long? = 0,
+    val pci: Int? = 0,
     val type: CellType = CellType.None,
     val arfcn: Int = 0,
     val frequency: Int? = 0,
@@ -163,7 +152,10 @@ class CellDataViewModel : ViewModel(), DataViewModelInterface {
             when (cell) {
                 is  CellLte -> {
                     val lteCell: CellLte = cell
-                    cellData = CellData(id = lteCell.cid,
+                    cellData = CellData(
+                        cid = lteCell.cid?.toLong(),
+                        nodeB = lteCell.enb,
+                        pci = lteCell.pci,
                         type = CellType.LTE,
                         arfcn = lteCell.band!!.downlinkEarfcn,
                         band = lteCell.band!!.name!!,
@@ -176,7 +168,10 @@ class CellDataViewModel : ViewModel(), DataViewModelInterface {
                 }
                 is  CellNr -> {
                     val nrCell: CellNr = cell
-                    cellData = CellData(id = nrCell.pci,
+                    cellData = CellData(
+                        cid = nrCell.nci,
+                        nodeB = null,
+                        pci = nrCell.pci,
                         type = CellType.NR,
                         arfcn = nrCell.band!!.downlinkArfcn,
                         band = nrCell.band!!.name!!,

@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "eu.bschmidt.devicepublisher"
-        minSdk = 28
+        minSdk = 25
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"

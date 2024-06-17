@@ -25,10 +25,11 @@ class CellDataRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values[position]
-        holder.cellIdTextView.text = item.id.toString()
+        val mostLikelyId = item.cid ?: item.pci ?: item.nodeB
+        holder.cellIdTextView.text = mostLikelyId.toString()
         holder.cellTypeTextView.text = item.type.toString()
         holder.arfcnTextView.text = item.arfcn.toString()
-        holder.bandTextView.text = item.band.toString()
+        holder.bandTextView.text = item.band
         holder.rssiTextView.text = item.rssi.toString()
         holder.rsrpTextView.text = item.rsrq.toString()
         holder.rsrqTextView.text = item.rsrp.toString()

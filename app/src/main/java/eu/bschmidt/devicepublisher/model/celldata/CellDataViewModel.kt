@@ -51,6 +51,7 @@ class CellDataViewModel : ViewModel(), DataViewModelInterface {
 
     private val _coreConnected: MutableList<CellData> = Collections.synchronizedList(mutableListOf<CellData>())
     private val _coreAvailable: MutableList<CellData> = Collections.synchronizedList(mutableListOf<CellData>())
+    private val _coreCA: MutableList<CellData> = Collections.synchronizedList(mutableListOf<CellData>())
 
     private val _connectedCellDataList = MutableLiveData<List<CellData>>()
     val connectedCellDataList: LiveData<List<CellData>> get() = _connectedCellDataList
@@ -58,9 +59,13 @@ class CellDataViewModel : ViewModel(), DataViewModelInterface {
     private val _availableCellDataList = MutableLiveData<List<CellData>>()
     val availableCellDataList: LiveData<List<CellData>> get() = _availableCellDataList
 
+    private val _caCellDataList = MutableLiveData<List<CellData>>()
+    val caCellDataList: LiveData<List<CellData>> get() = _availableCellDataList
+
     init {
         _connectedCellDataList.value = emptyList()
         _availableCellDataList.value = emptyList()
+        _caCellDataList.value = emptyList()
     }
 
     /* connected */
@@ -89,6 +94,20 @@ class CellDataViewModel : ViewModel(), DataViewModelInterface {
 
     fun getAvailableCells(): List<CellData> {
         return _coreAvailable.toMutableList()
+    }
+
+    /* Carrier Aggregation (CA) */
+
+    private fun setCACellData(newList: List<CellData>) {
+        _coreCA.clear()
+        _coreCA.addAll(newList)
+        DevPubUtils.dispatchToMainThread {
+            _caCellDataList.value = _coreCA
+        }
+    }
+
+    fun getCACells(): List<CellData> {
+        return _coreCA.toMutableList()
     }
 
     /* logic */
@@ -142,6 +161,7 @@ class CellDataViewModel : ViewModel(), DataViewModelInterface {
 
         val conList: MutableList<CellData> = mutableListOf<CellData>()
         val avaList: MutableList<CellData> = mutableListOf<CellData>()
+        val caList: MutableList<CellData> = mutableListOf<CellData>()
 
         currentCells.forEach { cell ->
             if (cell !is CellLte && cell !is CellNr) {
@@ -186,12 +206,25 @@ class CellDataViewModel : ViewModel(), DataViewModelInterface {
             }
             if (cell.connectionStatus != NoneConnection()) {
                 conList.add(cellData)
+                caList.add(cellData)
             } else {
                 avaList.add(cellData)
             }
         }
+        /* If there is one connected cell, take the best-RSRQ cell
+           as an "estimate" to the potential Carrier Aggregation cells
+         */
+        if (caList.size == 1 && avaList.size >= 1) {
+            val lowestRsrqCell = avaList
+                .filter { it.rsrq != null }
+                .maxByOrNull { it.rsrq!! }
+            if (lowestRsrqCell != null) {
+                caList.add(lowestRsrqCell)
+            }
+        }
         setConnectedCellData(conList)
         setAvailableCellData(avaList)
+        setCACellData(caList)
     }
 
     companion object {

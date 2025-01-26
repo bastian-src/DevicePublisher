@@ -17,6 +17,7 @@ import cz.mroczis.netmonster.core.model.cell.CellLte
 import cz.mroczis.netmonster.core.model.cell.CellNr
 import cz.mroczis.netmonster.core.model.cell.ICell
 import cz.mroczis.netmonster.core.model.connection.NoneConnection
+import cz.mroczis.netmonster.core.model.connection.PrimaryConnection
 import eu.bschmidt.devicepublisher.MainApplication
 import eu.bschmidt.devicepublisher.model.DataViewModelInterface
 import eu.bschmidt.devicepublisher.util.DevPubUtils
@@ -43,8 +44,8 @@ data class CellData (
     val rssi: Int? = 0,
     val rsrq: Double? = 0.0,
     val rsrp: Double? = 0.0,
-    val estimatedDownBandwidth: Int? = 0,
-    val estimatedUpBandwidth: Int? = 0,
+    var estimatedDownBandwidth: Int? = 0,
+    var estimatedUpBandwidth: Int? = 0,
 )
 
 class CellDataViewModel : ViewModel(), DataViewModelInterface {
@@ -182,8 +183,8 @@ class CellDataViewModel : ViewModel(), DataViewModelInterface {
                         rssi = lteCell.signal.rssi,
                         rsrp = lteCell.signal.rsrp,
                         rsrq = lteCell.signal.rsrq,
-                        estimatedDownBandwidth = if (cell.connectionStatus != NoneConnection()) down else null,
-                        estimatedUpBandwidth = if (cell.connectionStatus != NoneConnection()) up else null,
+                        estimatedDownBandwidth = null,
+                        estimatedUpBandwidth = null,
                         )
                 }
                 is  CellNr -> {
@@ -199,12 +200,14 @@ class CellDataViewModel : ViewModel(), DataViewModelInterface {
                         rsrp = nrCell.signal.ssRsrp?.toDouble(),
                         rsrq = nrCell.signal.ssRsrq?.toDouble(),
                         frequency = nrCell.band!!.downlinkFrequency,
-                        estimatedDownBandwidth = if (cell.connectionStatus != NoneConnection()) down else null,
-                        estimatedUpBandwidth = if (cell.connectionStatus != NoneConnection()) up else null,
+                        estimatedDownBandwidth = null,
+                        estimatedUpBandwidth = null,
                         )
                 }
             }
-            if (cell.connectionStatus != NoneConnection()) {
+            if (cell.connectionStatus is PrimaryConnection) {
+                cellData.estimatedUpBandwidth = up
+                cellData.estimatedDownBandwidth = down
                 conList.add(cellData)
                 caList.add(cellData)
             } else {

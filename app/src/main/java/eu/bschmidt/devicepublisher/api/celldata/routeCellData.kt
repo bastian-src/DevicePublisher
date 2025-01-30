@@ -33,6 +33,12 @@ suspend fun getAvailableCells(viewModel: CellDataViewModel): MutableList<CellDat
     return localCellList
 }
 
+suspend fun getCACells(viewModel: CellDataViewModel): MutableList<CellData> {
+    val localCellList: MutableList<CellData> = mutableListOf<CellData>()
+    localCellList.addAll(viewModel.getCACells().toMutableList())
+    return localCellList
+}
+
 fun Route.routeCellData() {
     val viewModel: CellDataViewModel = CellDataViewModel.getInstance()
     
@@ -75,6 +81,24 @@ fun Route.routeCellData() {
                 }
             }
         }
+
+        route("/estimate-ca") {
+            get("/all") {
+                val cellList = getCACells(viewModel)
+                call.respond(cellList)
+            }
+            get("/cell/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                val cellList = getCACells(viewModel)
+                if (id != null && id >= 0 && id < cellList.size) {
+                    val someCell: CellData = cellList[id]
+                    call.respond(someCell)
+                } else {
+                    call.respondText("Cell not found", status = HttpStatusCode.NotFound)
+                }
+            }
+        }
+
         
     }
 }
